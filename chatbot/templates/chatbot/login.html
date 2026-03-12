@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Bonga Na Kyu Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Segoe UI, Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            /* Green + brown gradient background */
+            background: linear-gradient(135deg, #1b5e20, #4e342e);
+
+        }
+
+        /* animated circles background */
+
+        body::before {
+
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background:
+
+                radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.15), transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.1), transparent 40%);
+
+        }
+
+        /* login card */
+
+        .login-box {
+
+            position: relative;
+            width: 350px;
+            padding: 40px;
+
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+
+            border-radius: 12px;
+
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+
+            text-align: center;
+
+            color: white;
+
+        }
+
+        /* title */
+
+        .login-box h2 {
+
+            margin-bottom: 25px;
+            font-weight: 500;
+
+        }
+
+        /* input fields */
+
+        .input-group {
+
+            margin-bottom: 18px;
+            text-align: left;
+
+        }
+
+        .input-group label {
+
+            font-size: 14px;
+            margin-bottom: 6px;
+            display: block;
+
+        }
+
+        .input-group input {
+
+            width: 100%;
+            padding: 10px;
+
+            border: none;
+            border-radius: 6px;
+
+            outline: none;
+
+            background: rgba(255, 255, 255, 0.9);
+
+        }
+
+        /* button */
+
+        .login-btn {
+
+            width: 100%;
+            padding: 11px;
+
+            border: none;
+            border-radius: 6px;
+
+            background: #2e7d32;
+
+            color: white;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition: 0.3s;
+
+        }
+
+        .login-btn:hover {
+
+            background: #1b5e20;
+
+        }
+
+        /* text under form */
+
+        .note {
+
+            margin-top: 15px;
+            font-size: 14px;
+            color: #f1f1f1;
+
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="login-box">
+
+        <h2>Sign in to your account</h2>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="input-group">
+                <label>Username</label>
+                <input type="text" name="username" required>
+            </div>
+
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" name="password" required>
+            </div>
+
+            <button class="login-btn" type="submit">Login</button>
+            <div style="margin-top:15px;">
+
+                <a href="{% url 'password_reset' %}" style="color:white;">
+                    Forgot Password?
+                </a>
+
+            </div>
+
+        </form>
+
+        {% if error %}
+
+        <p style="color:#ffdddd;margin-top:10px;">{{ error }}</p>
+        {% endif %}
+
+        <p class="note">
+            Contact the administrator if you do not have login credentials Email:alexjuma2022@gmail.com
+        </p>
+
+    </div>
+
+</body>
+
+</html>
