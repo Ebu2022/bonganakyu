@@ -1,26 +1,20 @@
-
 import os
 from pathlib import Path
 from decouple import config
 import dj_database_url
 
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Security
+# SECURITY
 SECRET_KEY = config("SECRET_KEY")
-
 DEBUG = config("DEBUG", default=True, cast=bool)
 
-ALLOWED_HOSTS = ['*']
-CSRF_TRUSTED_ORIGINS = ["https://*.onrender.com"]
-
+ALLOWED_HOSTS = ["*"]
 
 # API KEY
 GEMINI_API_KEY = config("GEMINI_API_KEY")
 
-
-# Applications
+# APPLICATIONS
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -31,8 +25,7 @@ INSTALLED_APPS = [
     'chatbot',
 ]
 
-
-# Middleware
+# MIDDLEWARE
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -44,11 +37,9 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-
 ROOT_URLCONF = 'bonganakyu.urls'
 
-
-# Templates
+# TEMPLATES
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -64,54 +55,38 @@ TEMPLATES = [
     },
 ]
 
-
 WSGI_APPLICATION = 'bonganakyu.wsgi.application'
 
-
-# Database
+# DATABASE (LOCAL POSTGRES)
 DATABASES = {
     "default": dj_database_url.config(
-        default=os.environ.get("DATABASE_URL")
+        default="sqlite:///db.sqlite3",
+        conn_max_age=600
     )
 }
 
-
-# Password Validation
-AUTH_PASSWORD_VALIDATORS = [
-    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
-]
-
-
-# Internationalization
+# INTERNATIONAL
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'Africa/Nairobi'
-
 USE_I18N = True
 USE_TZ = True
 
-
-# Static Files
+# STATIC
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-
-# Media
+# MEDIA
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-
-# Authentication
+# AUTH
 LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "chatbot"
 LOGOUT_REDIRECT_URL = "login"
 
-
-# Email
+# EMAIL
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
