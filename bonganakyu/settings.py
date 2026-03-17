@@ -1,7 +1,9 @@
-from django.conf import settings
+
 import os
 from pathlib import Path
 from decouple import config
+import dj_database_url
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -10,14 +12,12 @@ SECRET_KEY = config("SECRET_KEY")
 
 DEBUG = config("DEBUG", default=True, cast=bool)
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ['*']
 CSRF_TRUSTED_ORIGINS = ["https://*.onrender.com"]
 
 
 # API KEY
 GEMINI_API_KEY = config("GEMINI_API_KEY")
-print("Gemini API Key:", GEMINI_API_KEY)
-print(settings.GEMINI_API_KEY)
 
 
 # Applications
@@ -70,14 +70,9 @@ WSGI_APPLICATION = 'bonganakyu.wsgi.application'
 
 # Database
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": config("DB_NAME"),
-        "USER": config("DB_USER"),
-        "PASSWORD": config("DB_PASSWORD"),
-        "HOST": config("DB_HOST"),
-        "PORT": config("DB_PORT"),
-    }
+    "default": dj_database_url.config(
+        default=os.environ.get("DATABASE_URL")
+    )
 }
 
 
