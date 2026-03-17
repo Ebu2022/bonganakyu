@@ -18,17 +18,19 @@ from google import genai
 # Gemini client
 client = genai.Client(api_key=settings.GEMINI_API_KEY)
 
-
 # -----------------------------
 # FORGOT PASSWORD
 # -----------------------------
+
+
 def forgot_password(request):
     return render(request, "chatbot/forgot_password.html")
-
 
 # -----------------------------
 # CHANGE PASSWORD
 # -----------------------------
+
+
 @login_required
 def change_password(request):
     if request.method == "POST":
@@ -43,10 +45,11 @@ def change_password(request):
 
     return render(request, "chatbot/change_password.html", {"form": form})
 
-
 # -----------------------------
 # LOGIN
 # -----------------------------
+
+
 def login_view(request):
     if request.method == "POST":
         username = request.POST.get("username")
@@ -64,26 +67,29 @@ def login_view(request):
 
     return render(request, "chatbot/login.html")
 
-
 # -----------------------------
 # LOGOUT
 # -----------------------------
+
+
 def logout_view(request):
     logout(request)
     return redirect("login")
 
-
 # -----------------------------
 # CHAT PAGE (LOGIN REQUIRED)
 # -----------------------------
+
+
 @login_required
 def chat_page(request):
     return render(request, "chatbot/index.html")
 
-
 # -----------------------------
 # CHAT API
 # -----------------------------
+
+
 @csrf_exempt
 @login_required
 def chat_api(request):
@@ -191,7 +197,7 @@ def chat_api(request):
 
         try:
             response = client.models.generate_content(
-                model="gemini-1.5-flash",
+                model="gemini-flash-latest",
                 contents=f"You are a helpful university assistant.\nUser: {message}"
             )
             ai_reply = response.text

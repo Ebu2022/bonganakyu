@@ -1,24 +1,26 @@
 from django.urls import path
-from . import views
 from django.contrib.auth import views as auth_views
+from . import views
 
 urlpatterns = [
 
-    path("", views.login_view, name="login"),
-
-    path("chat/", views.chat_page, name="chat_page"),
-
-    path("api/chat/", views.chat_api, name="chat_api"),
-
+    # Authentication
+    path("login/", views.login_view, name="login"),
     path("logout/", views.logout_view, name="logout"),
-
     path("change-password/", views.change_password, name="change_password"),
 
-    # Forgot password
+    # Chat interface
+    path("chat/", views.chat_page, name="chat_page"),
+
+    # API
+    path("api/chat/", views.chat_api, name="chat_api"),
+
+    # Password reset
     path(
         "forgot-password/",
         auth_views.PasswordResetView.as_view(
-            template_name="chatbot/forgot_password.html"
+            template_name="chatbot/forgot_password.html",
+            success_url="/password-reset-done/",
         ),
         name="password_reset",
     ),
