@@ -1,20 +1,28 @@
 import os
 from pathlib import Path
 from decouple import config
-import dj_database_url
 
+# ------------------------------
+# BASE DIRECTORY
+# ------------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# ------------------------------
 # SECURITY
+# ------------------------------
 SECRET_KEY = config("SECRET_KEY")
 DEBUG = config("DEBUG", default=True, cast=bool)
+ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 
-ALLOWED_HOSTS = ["*"]
-
-# API KEY
+# ------------------------------
+# API KEYS
+# ------------------------------
+# default empty string if not set
 GEMINI_API_KEY = config("GEMINI_API_KEY", default="")
 
-# APPLICATIONS
+# ------------------------------
+# INSTALLED APPS
+# ------------------------------
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -25,7 +33,9 @@ INSTALLED_APPS = [
     'chatbot',
 ]
 
+# ------------------------------
 # MIDDLEWARE
+# ------------------------------
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -37,9 +47,15 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# ------------------------------
+# URLS AND WSGI
+# ------------------------------
 ROOT_URLCONF = 'bonganakyu.urls'
+WSGI_APPLICATION = 'bonganakyu.wsgi.application'
 
+# ------------------------------
 # TEMPLATES
+# ------------------------------
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -55,46 +71,55 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'bonganakyu.wsgi.application'
-
-# DATABASE (LOCAL POSTGRES)
+# ------------------------------
+# DATABASE (PostgreSQL)
+# ------------------------------
 DATABASES = {
-    'default': dj_database_url.config(
-        default=config('DATABASE_URL'),
-        conn_max_age=600,
-        ssl_require=True
-    )
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": config("DB_NAME", default="bonganakyu"),
+        "USER": config("DB_USER", default="postgres"),
+        "PASSWORD": config("DB_PASSWORD", default="ibrakada"),
+        "HOST": config("DB_HOST", default="localhost"),
+        "PORT": config("DB_PORT", default="5432"),
+    }
 }
 
-
-# INTERNATIONAL
+# ------------------------------
+# INTERNATIONALIZATION
+# ------------------------------
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'Africa/Nairobi'
 USE_I18N = True
 USE_TZ = True
 
-# STATIC
+# ------------------------------
+# STATIC FILES
+# ------------------------------
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# MEDIA
+# ------------------------------
+# MEDIA FILES
+# ------------------------------
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# AUTH
+# ------------------------------
+# AUTHENTICATION
+# ------------------------------
 LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "chatbot"
 LOGOUT_REDIRECT_URL = "login"
 
+# ------------------------------
 # EMAIL
+# ------------------------------
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-
 EMAIL_HOST_USER = config("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
-
-DEFAULT_FROM_EMAIL = "University Assistant <alexjuma2022@gmail.com>"
+DEFAULT_FROM_EMAIL = f"University Assistant <{EMAIL_HOST_USER}>"

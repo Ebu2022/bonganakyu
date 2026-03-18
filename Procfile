@@ -1,1 +1,1 @@
-web: gunicorn bonganakyu.wsgi
+web: gunicorn bonganakyu.wsgi --log-file -

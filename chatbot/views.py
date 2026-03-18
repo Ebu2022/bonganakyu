@@ -104,27 +104,18 @@ def chat_api(request):
             return JsonResponse({"reply": "Please type something.", "image": None})
 
         message_lower = message.lower()
-        matched = False
 
-        # -----------------------------
-        # FAQ SEARCH (IMPROVED)
-        # -----------------------------
+        # FAQ SEARCH
+
         for faq in FAQ.objects.all():
             keywords = (faq.keywords or "").lower().split(",")
+            if any(k.strip() in message_lower for k in keywords):
+                ChatLog.objects.create(
+                    user=request.user, message=message, response_type="faq")
+                return JsonResponse({"reply": faq.answer, "image": None})
 
-            for k in keywords:
-                k = k.strip()
-                if k and (k in message_lower or message_lower in k):
-                    ChatLog.objects.create(
-                        user=request.user,
-                        message=message,
-                        response_type="faq"
-                    )
-                    return JsonResponse({"reply": faq.answer, "image": None})
+        # NAVIGATION SEARCH (BEST MATCH)
 
-        # -----------------------------
-        # NAVIGATION SEARCH (SMART MATCH)
-        # -----------------------------
         best_match = None
         best_score = 0
 
@@ -133,44 +124,31 @@ def chat_api(request):
             place_name = nav.place.lower()
             keywords = (nav.keywords or "").lower().split(",")
 
-            # place name match
+            # check place name
             if place_name in message_lower:
                 score += 5
 
-            # word-based matching
-            for word in message_lower.split():
-                if word in place_name:
-                    score += 1
-
-            # keyword match
+            # check keywords
             for k in keywords:
                 k = k.strip()
                 if k and k in message_lower:
-                    score += 2
+                    score += 1
 
+            # keep the best scoring match
             if score > best_score:
                 best_score = score
                 best_match = nav
 
-        if best_match and best_score > 0:
+        if best_match:
             image_url = best_match.image.url if best_match.image else None
-
             ChatLog.objects.create(
-                user=request.user,
-                message=message,
-                response_type="navigation"
-            )
-            return JsonResponse({
-                "reply": best_match.description,
-                "image": image_url
-            })
+                user=request.user, message=message, response_type="navigation")
+            return JsonResponse({"reply": best_match.description, "image": image_url})
 
-        # -----------------------------
         # ATTACHMENT SEARCH
-        # -----------------------------
+
         degrees = AttachmentOpportunity.objects.values_list(
             "degree_programme", flat=True).distinct()
-
         matched_degree = None
 
         for degree in degrees:
@@ -181,7 +159,6 @@ def chat_api(request):
         if matched_degree:
             attachments = AttachmentOpportunity.objects.filter(
                 degree_programme__iexact=matched_degree)
-
             if attachments.exists():
                 table = """
                 <div style="overflow-x:auto; max-height:300px; overflow-y:auto;">
@@ -192,7 +169,6 @@ def chat_api(request):
                 <th style="padding:8px;">Contact</th>
                 </tr>
                 """
-
                 for a in attachments:
                     table += f"""
                     <tr>
@@ -201,20 +177,14 @@ def chat_api(request):
                     <td style="padding:6px;">{a.contact}</td>
                     </tr>
                     """
-
                 table += "</table></div>"
 
                 ChatLog.objects.create(
-                    user=request.user,
-                    message=message,
-                    response_type="attachment"
-                )
-
+                    user=request.user, message=message, response_type="attachment")
                 return JsonResponse({"reply": table, "image": None})
 
-        # -----------------------------
         # DEGREE SUGGESTION
-        # -----------------------------
+
         if "attachment" in message_lower or "degree" in message_lower:
             if degrees:
                 html = "<b>No results found.</b><br><br>Available degrees:<ul>"
@@ -223,26 +193,20 @@ def chat_api(request):
                 html += "</ul>"
                 return JsonResponse({"reply": html, "image": None})
 
-        # -----------------------------
         # GEMINI AI FALLBACK
-        # -----------------------------
+
         try:
             response = client.models.generate_content(
                 model="gemini-flash-latest",
                 contents=f"You are a helpful university assistant.\nUser: {message}"
             )
             ai_reply = response.text
-
         except Exception as e:
             print("GEMINI ERROR:", e)
             ai_reply = "AI service unavailable."
 
         ChatLog.objects.create(
-            user=request.user,
-            message=message,
-            response_type="ai"
-        )
-
+            user=request.user, message=message, response_type="ai")
         return JsonResponse({"reply": ai_reply, "image": None})
 
     except Exception as e:
