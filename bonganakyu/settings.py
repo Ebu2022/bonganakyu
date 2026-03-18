@@ -12,7 +12,7 @@ DEBUG = config("DEBUG", default=True, cast=bool)
 ALLOWED_HOSTS = ["*"]
 
 # API KEY
-GEMINI_API_KEY = config("GEMINI_API_KEY")
+GEMINI_API_KEY = config("GEMINI_API_KEY", default="")
 
 # APPLICATIONS
 INSTALLED_APPS = [
@@ -59,11 +59,16 @@ WSGI_APPLICATION = 'bonganakyu.wsgi.application'
 
 # DATABASE (LOCAL POSTGRES)
 DATABASES = {
-    "default": dj_database_url.config(
-        default="sqlite:///db.sqlite3",
-        conn_max_age=600
-    )
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": config("DB_NAME"),
+        "USER": config("DB_USER"),
+        "PASSWORD": config("DB_PASSWORD"),
+        "HOST": config("DB_HOST"),
+        "PORT": config("DB_PORT"),
+    }
 }
+
 
 # INTERNATIONAL
 LANGUAGE_CODE = 'en-us'
