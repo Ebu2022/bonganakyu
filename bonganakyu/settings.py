@@ -32,8 +32,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'cloudinary',
     'cloudinary_storage',
+    'cloudinary',
+
 
     'chatbot',
 ]
