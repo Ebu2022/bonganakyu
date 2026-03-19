@@ -140,7 +140,7 @@ def chat_api(request):
                 best_match = nav
 
         if best_match:
-            image_url = best_match.image.url if best_match.image else None
+            image_url = None
             ChatLog.objects.create(
                 user=request.user, message=message, response_type="navigation")
             return JsonResponse({"reply": best_match.description, "image": image_url})
