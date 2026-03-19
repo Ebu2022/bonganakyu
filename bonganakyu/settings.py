@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 from decouple import config
 import dj_database_url
+import cloudinary
 
 # ------------------------------
 # BASE DIRECTORY
@@ -18,7 +19,6 @@ ALLOWED_HOSTS = ["127.0.0.1", "localhost", ".onrender.com"]
 # ------------------------------
 # API KEYS
 # ------------------------------
-# default empty string if not set
 GEMINI_API_KEY = config("GEMINI_API_KEY", default="")
 
 # ------------------------------
@@ -31,8 +31,23 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'cloudinary',
+    'cloudinary_storage',
+
     'chatbot',
 ]
+
+# ------------------------------
+# CLOUDINARY CONFIG
+# ------------------------------
+cloudinary.config(
+    cloud_name=config("CLOUDINARY_CLOUD_NAME", default=""),
+    api_key=config("CLOUDINARY_API_KEY", default=""),
+    api_secret=config("CLOUDINARY_API_SECRET", default=""),
+)
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # ------------------------------
 # MIDDLEWARE
@@ -73,15 +88,15 @@ TEMPLATES = [
 ]
 
 # ------------------------------
-# DATABASE (PostgreSQL)
+# DATABASE
 # ------------------------------
-DATABASES = {
-    "default": dj_database_url.config(
-        default=config("DATABASE_URL", default="")
-    )
-}
+DATABASE_URL = config("DATABASE_URL", default="")
 
-if not DATABASES["default"]:
+if DATABASE_URL:
+    DATABASES = {
+        "default": dj_database_url.parse(DATABASE_URL)
+    }
+else:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
@@ -118,7 +133,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # AUTHENTICATION
 # ------------------------------
 LOGIN_URL = "login"
-LOGIN_REDIRECT_URL = "chatbot"
+LOGIN_REDIRECT_URL = "chat_page"   # ⚠️ FIXED (was "chatbot")
 LOGOUT_REDIRECT_URL = "login"
 
 # ------------------------------
