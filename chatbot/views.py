@@ -185,8 +185,8 @@ def chat_api(request):
 
             if attachments.exists():
                 table = """
-                <div style="overflow-x:auto; max-height:250px; overflow-y:auto;">
-                <table style="width:100%; border-collapse: collapse; background:white; color:black;">
+                <div style="overflow-x:auto; overflow-y:auto; max-height:250px; -webkit-overflow-scrolling: touch;">
+                <table style="min-width:700px; border-collapse: collapse; background:white; color:black;">
                 <tr style="background:#1a5f4a;color:white;">
                 <th style="padding:8px;">Company</th>
                 <th style="padding:8px;">Location</th>
